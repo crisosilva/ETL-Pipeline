@@ -18,13 +18,11 @@ Acesse, baixe e siga as orientações de instalação.
 <h4>Instalação das bibliotecas</h4>
 Para instalar as bibliotecas utilize os comandos abaixo:
 
-'''python
 
+```python
 pip install prefect
-
 pip install pandas
-
-'''
+```
 
 <h2>🛠️ Construído com</h2>
 
