@@ -5,13 +5,15 @@ import requests as re
 from datetime import datetime, timedelta
 import json
 
+#Importando as bibliotecas prefect
 from prefect import task, Flow, Parameter
-from prefect.schedules import CronSchedule
+from prefect.schedules import IntervalSchedule
 
 #endregion
 
 #region Extracting data
-@task( max_retries=5, retry_delay=timedelta(seconds=20))
+
+@task( name='extract', max_retries=5, retry_delay=timedelta(seconds=20))
 def extract(url: str) -> dict:
     response = re.get(url)
     if not response:
@@ -21,7 +23,7 @@ def extract(url: str) -> dict:
 #endregion
 
 #region Transforming data
-@task
+@task(name='transform')
 def transform(data: list) -> pd.DataFrame:
     data_transformed = []
     for record in data:
@@ -40,23 +42,23 @@ def transform(data: list) -> pd.DataFrame:
 #endregion
 
 #region Loading data
-@task
-def load(df: pd.DataFrame, path: str) -> None:
+
+@task(name='load')
+def load(df: pd.DataFrame, path: str):
     df.to_csv(path_or_buf=path, index=False)
 
 #endregion
 
 #region Schedule
 
-#scheduler = IntervalSchedule(interval=timedelta(seconds=10)) #Execução agendada a cada 10s
-scheduler = CronSchedule(cron='* * * * *') #Execução agendada a cada 1min
+scheduler = IntervalSchedule(interval=timedelta(seconds=60)) #Agendamento configurado para 60seg
 
 #endregion
 
 #region Flow
 
-def prefect_flow():
-    with Flow(name='simple_etl_pipeline', schedule=scheduler) as flow:
+def flow():
+    with Flow(name='etl_pipeline', schedule=scheduler) as flow:
         url_principal = Parameter('url', required=True)
 
         data = extract(url_principal)
@@ -67,5 +69,7 @@ def prefect_flow():
 #endregion
 
 if __name__ == '__main__':
-    flow = prefect_flow()
-    flow.run(parameters={'url': 'https://dados.antt.gov.br/dataset/a133da64-1e03-4832-909d-e1eb835eec2e/resource/d46bbb49-95f3-44b0-bb9a-0ce095746bbe/download/investimentos.json'})
+    url = 'https://dados.antt.gov.br/dataset/a133da64-1e03-4832-909d-e1eb835eec2e/resource/d46bbb49-95f3-44b0-bb9a-0ce095746bbe/download/investimentos.json'
+    flow = flow()
+    flow.run(parameters={'url': url})
+
