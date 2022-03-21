@@ -18,7 +18,8 @@ def extract(url: str) -> dict:
     response = re.get(url)
     if not response:
         raise Exception('Nenhum dado encontrado')
-    return json.loads(response.content)
+    content = json.loads(response.content)
+    return content['investimentos']
 
 #endregion
 
@@ -62,7 +63,7 @@ def flow():
         url_principal = Parameter('url', required=True)
 
         data = extract(url_principal)
-        df_transformed = transform(data['investimentos'])
+        df_transformed = transform(data)
         load(df=df_transformed, path=f'loads/fornecedores_{int(datetime.now().timestamp())}.csv')
     return flow
 
