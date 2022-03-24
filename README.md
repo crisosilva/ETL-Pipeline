@@ -3,7 +3,7 @@ Projeto de um pipeline de ETL usando a biblioteca prefect que realizará
 o gerenciamento do fluxo de trabalho podendo ser usado tanto localmente
 quanto na nuvem, podendo assim substituir o Airflow.
 
-<h2>:clipboard:Pré requisitos</h2>
+<h2>:clipboard: Pré requisitos</h2>
 Para utilizar o projeto será necessário instalar o Python 3 caso não tenha
 instalado além das bibliotecas utilizadas no projeto
 
@@ -38,7 +38,7 @@ Projeto criado por Cristiano Oliveira
 
 <h2>📌 Versão </h2>
 
-Version: 1.0.0
+Version: 1.0.3
 
 <h2>Referências</h2>
 

@@ -13,7 +13,7 @@ from prefect.schedules import IntervalSchedule
 
 #region Extracting data
 
-@task( name='extract', max_retries=5, retry_delay=timedelta(seconds=20))
+@task( name='extract', max_retries=5, retry_delay=timedelta(seconds=30))
 def extract(url: str) -> dict:
     response = re.get(url)
     if not response:
@@ -24,7 +24,7 @@ def extract(url: str) -> dict:
 #endregion
 
 #region Transforming data
-@task(name='transform')
+@task(name='transform',  max_retries=5, retry_delay=timedelta(seconds=30))
 def transform(data: list) -> pd.DataFrame:
     data_transformed = []
     for record in data:
@@ -44,7 +44,7 @@ def transform(data: list) -> pd.DataFrame:
 
 #region Loading data
 
-@task(name='load')
+@task(name='load',  max_retries=5, retry_delay=timedelta(seconds=30))
 def load(df: pd.DataFrame, path: str):
     df.to_csv(path_or_buf=path, index=False)
 
@@ -52,7 +52,7 @@ def load(df: pd.DataFrame, path: str):
 
 #region Schedule
 
-scheduler = IntervalSchedule(interval=timedelta(seconds=60)) #Agendamento configurado para 60seg
+scheduler = IntervalSchedule(interval=timedelta(seconds=300)) #Agendamento configurado para 60seg
 
 #endregion
 
